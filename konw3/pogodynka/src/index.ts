@@ -1,14 +1,51 @@
-import { App } from './app';
+
+
+
+import { ApiProvider } from './ApiProvider';
 import './main.scss';
+import { IWeatherData, IWeather } from './interface';
 
-const inputText: HTMLInputElement = document.querySelector("#inputText");
-const submitButton: HTMLButtonElement = document.querySelector("#button");
+let inputCity: HTMLInputElement = document.createElement("input");
+inputCity.id ="inputField";
+inputCity.innerText=""
 
-const app = new App()
+let submitButton: HTMLButtonElement = document.createElement("button");
+submitButton.id = "submitButton";
+submitButton.innerHTML = "+";
+
+const searchDiv: HTMLDivElement = document.querySelector("#city");
+const resultDiv: HTMLDivElement = document.querySelector("#result");
+
+searchDiv.appendChild(inputCity);
+searchDiv.appendChild(submitButton);
 
 submitButton.addEventListener('click', () => {
-    let text = inputText.value;
-     app.bindInputEvents(text);
+    let cityName = app.getCityName();
+    
+    if(app.cityArray.includes(cityName) || app.getCities().includes(cityName)){
+        return;
+    }else{
+        app.getCityInfo(cityName).then(data => {
+            resultDiv.appendChild(app.createWeatherDiv(data, cityName));
+
+        })
+        app.saveCityArray(cityName);
+    }
 });
 
+window.addEventListener('beforeunload', function() {
+    app.saveCitiesToLocalStorage(app.cityArray);
+});
 
+window.addEventListener('load', () => {
+    let cities: string[] = app.getCities();
+    if(cities){
+        cities.forEach((city, countCity) => {
+            app.getCityInfo(city).then(data => {
+                resultDiv.appendChild(app.createWeatherDiv(data,cities[countCity]));
+            })
+        });
+    }
+});
+
+const app = new ApiProvider();
