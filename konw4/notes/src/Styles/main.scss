@@ -1,7 +1,6 @@
 body {
-  background: #ffda79;
-  font-family: sans-serif;
-  font-size: 10px;
+  background: rgb(114, 113, 113);
+  font-family: Tahoma;
 }
 
 #inputContainer{
@@ -9,12 +8,10 @@ body {
   display: flex;
   flex-direction: row;
   width: 100%;
-  justify-content: right;
-  padding-left: 50px;
-  
+  justify-content: center;
 }
 #input{
-  color:black;
+  color:white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -31,15 +28,16 @@ body {
   .inputField{
     border:none;
     outline: none;
-    background: #ccae62;
-    color: black;
-    height: 15px;
-    font-size: 15px;
+    background: rgb(114, 113, 113);
+    border-bottom: solid 1px;
+    color: white;
+    height: 20px;
+    font-size: 20px;
     width: 100%;
     max-width: 400px;
   }
   #inputText{
-    border:1px solid black;
+    border:1px solid white;
     width: 100%;
     height: 200px;
     resize: none;
@@ -51,9 +49,9 @@ body {
   border: solid 1px;
   outline: none;
   cursor: pointer;
-  background: #ff793f;
+  background: rgb(114, 113, 113);
   font-weight: bold;
-  color:black;
+  color:white;
   font-size: 15px;
   min-width: 100px;
 }
@@ -67,7 +65,7 @@ body {
   flex-direction: column;
   font-family: inherit;
   span{
-    font-size: 15px;
+    font-size: 25px;
     font-weight: bold;
   }
   hr{
@@ -90,3 +88,4 @@ body {
     flex-wrap: wrap;
   }
 }
+

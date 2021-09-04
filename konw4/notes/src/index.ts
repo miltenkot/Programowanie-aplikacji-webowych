@@ -1,4 +1,4 @@
-import app from './App'
+import app from './App';
 import appStorage from './Storage/AppStorage';
 import Note from './Note/Note';
 import Notes from './Notes/Notes';
@@ -15,13 +15,13 @@ notes.pinnedDiv = pinned;
 notes.notesDiv = notesDiv;
 
 submitButton.addEventListener('click', () => {
-    let newNote = note.save(app.counter, inputTitle.value,inputText.value, "#ccae62", false);
-    note.map(newNote);
-    notes.notesDiv.appendChild(notes.create(newNote));
+    let newNote = note.saveToNote(app.counter, inputTitle.value,inputText.value, "lightgray", false);
+    note.noteToArr(newNote);
+    notes.notesDiv.appendChild(notes.createNote(newNote));
 });
 
 window.addEventListener('beforeunload', function() {
-    appStorage.saveToLocalStorage(app.notes);
+    appStorage.saveToLocalStorage(app.noteArr);
 });
 
 window.addEventListener('load', () => {
@@ -30,14 +30,13 @@ window.addEventListener('load', () => {
     if(app.noteLS){
         app.noteLS.forEach((elem, index) => {
 
-            app.notes[index] = app.noteLS[index];
+            app.noteArr[index] = app.noteLS[index];
 
             if(app.noteLS[index].isPinned){
-                pinned.appendChild(notes.create(app.noteLS[index]));
+                pinned.appendChild(notes.createNote(app.noteLS[index]));
             }else{
-                notesDiv.appendChild(notes.create(app.noteLS[index]));
+                notesDiv.appendChild(notes.createNote(app.noteLS[index]));
             }
         });
     }
 });
-

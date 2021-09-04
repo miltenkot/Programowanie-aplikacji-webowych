@@ -1,4 +1,4 @@
-interface NoteData{
+interface INote{
     id: number,
     title: string,
     text: string,

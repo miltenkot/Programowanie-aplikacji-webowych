@@ -1,8 +1,9 @@
+
 class AppStorage{
 
     constructor(){}
     
-    saveToLocalStorage(noteArr: NoteData[]){
+    saveToLocalStorage(noteArr: INote[]){
         localStorage.setItem("noteLS", JSON.stringify(noteArr));
     }
 

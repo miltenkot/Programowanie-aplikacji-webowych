@@ -2,8 +2,8 @@ export class App {
 
     constructor() {}
     
-    noteLS: NoteData[] = [];
-    notes: NoteData[] = [];
+    noteLS: INote[] = [];
+    noteArr: INote[] = [];
     counter: number = 0;
 }
 
