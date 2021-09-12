@@ -1,9 +1,5 @@
 export class App {
-
     constructor() {}
-    
-    noteLS: NoteData[] = [];
-    notes: NoteData[] = [];
     counter: number = 0;
 }
 

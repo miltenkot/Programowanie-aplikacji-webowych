@@ -1,9 +1,8 @@
-import app from './App'
-
-import remoteStorage from './Storage/RemoteSorage';
+import app from './App';
 import Note from './Note/Note';
 import Notes from './Notes/Notes';
 import './Styles/main.scss';
+import appFireStorage from './Storage/AppFirebaseStorage'
 
 const note = new Note();
 const notes = new Notes();
@@ -16,13 +15,24 @@ notes.pinnedDiv = pinned;
 notes.notesDiv = notesDiv;
 
 submitButton.addEventListener('click', () => {
-    let newNote = note.save(app.counter, inputTitle.value,inputText.value, "#ccae62", false);
-    note.map(newNote);
-    notes.notesDiv.appendChild(notes.create(newNote));
-    remoteStorage.addFire(newNote);
+
+    let newNote = note.saveToNote('', inputTitle.value,inputText.value, "lightgray", false);
+    notes.notesDiv.appendChild(notes.createNote(newNote));
+    appFireStorage.addNote(newNote).then(res => {
+        newNote.id = res;
+    });
 });
 
 window.addEventListener('load', () => {
-    remoteStorage.getNotesCollection();
-});
+    appFireStorage.getFromStorage().then(function(data){
+        data.forEach(ele => {
+            let note = ele as INote;
 
+            if(note.isPinned){
+                pinned.appendChild(notes.createNote(note));
+            }else{
+                notesDiv.appendChild(notes.createNote(note));
+            }
+        });
+    });
+});
