@@ -39,17 +39,8 @@ export class Notes{
         title.className = "noteTitle";
         title.innerHTML = note.title;
         title.addEventListener('DOMSubtreeModified', () => {
-            appFireStorage.updateNote(note.id,{
-                title: title.innerHTML,
-            })
+            note.title = title.innerHTML;
         });
-
-
-        let noteCloseButton: HTMLButtonElement = document.createElement("button");
-        noteCloseButton.id = "noteCloseButton" + app.counter;
-        noteCloseButton.className = "noteCloseButton";
-        noteCloseButton.innerHTML = 'X';
-        this.noteCloseEvent(noteCloseButton, note);
 
         let noteTextArea: HTMLTextAreaElement = document.createElement("textarea");
         noteTextArea.id = "noteTextArea" + app.counter;
@@ -73,18 +64,24 @@ export class Notes{
         noteChangeColor.innerText = "COLOR"
         this.noteChangeColorEvent(noteChangeColor, noteDiv, note);
 
+        let noteCloseButton: HTMLButtonElement = document.createElement("button");
+        noteCloseButton.id = "noteCloseButton" + app.counter;
+        noteCloseButton.className = "noteButtons";
+        noteCloseButton.innerHTML = 'X';
+        this.noteCloseEvent(noteCloseButton, note);
+
         noteDiv.appendChild(noteDragDiv);
         noteDragDiv.appendChild(noteDate);
         noteDiv.appendChild(noteInnerWrapper);
 
         noteInnerWrapper.appendChild(noteTitleDiv);
         noteTitleDiv.appendChild(title);
-        noteInnerWrapper.appendChild(noteCloseButton);
         noteInnerWrapper.appendChild(noteTextArea);
 
         noteDiv.appendChild(noteButtons);
         noteButtons.appendChild(pinNote);
         noteButtons.appendChild(noteChangeColor);
+        noteButtons.appendChild(noteCloseButton);
         return noteDiv;
     }
 
