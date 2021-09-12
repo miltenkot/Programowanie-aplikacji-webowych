@@ -1,20 +1,21 @@
 import app from '../App';
 import '../Styles/note.scss';
 import { Colors } from '../Enums/enum'
+import appFireStorage from '../Storage/AppFirebaseStorage'
 
 export class Notes{
 
     pinnedDiv: HTMLDivElement;
     notesDiv: HTMLDivElement;
     
-    create(note: NoteData){
+    createNote(note: INote){
 
-        let noteDiv = document.createElement("div");
+        let noteDiv: HTMLDivElement = document.createElement("div");
         noteDiv.id = app.counter.toString();
         noteDiv.className = "note";
         noteDiv.style.backgroundColor = note.bgColor;
 
-        let noteInnerWrapper = document.createElement("div");
+        let noteInnerWrapper: HTMLDivElement = document.createElement("div");
         noteInnerWrapper.id = "noteInnerWrapper" + app.counter;
         noteInnerWrapper.className = "noteInnerWrapper";
 
@@ -38,8 +39,11 @@ export class Notes{
         title.className = "noteTitle";
         title.innerHTML = note.title;
         title.addEventListener('DOMSubtreeModified', () => {
-            note.title = title.innerHTML;
+            appFireStorage.updateNote(note.id,{
+                title: title.innerHTML,
+            })
         });
+
 
         let noteCloseButton: HTMLButtonElement = document.createElement("button");
         noteCloseButton.id = "noteCloseButton" + app.counter;
@@ -84,37 +88,42 @@ export class Notes{
         return noteDiv;
     }
 
-    noteCloseEvent(noteCloseButton: HTMLButtonElement, note: NoteData){
+    noteCloseEvent(noteCloseButton: HTMLButtonElement, note: INote){
 
         noteCloseButton.onclick = () => { 
             noteCloseButton.parentNode.parentNode.parentNode.removeChild(noteCloseButton.parentNode.parentNode);
-            app.notes.splice(app.notes.indexOf(app.notes.find(element => element.id == note.id)),1);
-            app.noteLS.splice(app.noteLS.indexOf(app.noteLS.find(element => element.id == note.id)),1);
+            appFireStorage.deleteNote(note.id);
         }
     }
 
-    noteCheckTextAreaEvent(noteTextArea: HTMLTextAreaElement,  note: NoteData){
+    noteCheckTextAreaEvent(noteTextArea: HTMLTextAreaElement,  note: INote){
 
         noteTextArea.addEventListener('change', () => {
-            note.text = noteTextArea.value;
+            appFireStorage.updateNote(note.id,{
+                text: noteTextArea.value,
+            })
         });
     }
 
-    notePinEvent(pinNote: HTMLElement, noteDiv: HTMLDivElement, note: NoteData){
+    notePinEvent(pinNote: HTMLElement, noteDiv: HTMLDivElement, note: INote){
 
         pinNote.addEventListener('click', () => {
             if(!note.isPinned){
                 this.pinnedDiv.appendChild(noteDiv);
-                note.isPinned = true;
+                appFireStorage.updateNote(note.id,{
+                    isPinned: true,
+                })
                 
             }else{
                 this.notesDiv.appendChild(noteDiv);
-                note.isPinned = false;
+                appFireStorage.updateNote(note.id,{
+                    isPinned: false,
+                })
             }
         });
     }
 
-    noteChangeColorEvent(noteChangeColor: HTMLButtonElement, noteDiv: HTMLDivElement, note: NoteData){
+    noteChangeColorEvent(noteChangeColor: HTMLButtonElement, noteDiv: HTMLDivElement, note: INote){
 
         noteChangeColor.addEventListener('click', () => {
             if(document.querySelector("#changeColorDiv") == null){
@@ -142,7 +151,9 @@ export class Notes{
     
                     colorCircle.addEventListener('click', () => {
                         noteDiv.style.backgroundColor = colorCircle.style.backgroundColor;
-                        note.bgColor = colorCircle.style.backgroundColor
+                        appFireStorage.updateNote(note.id,{
+                            bgColor: colorCircle.style.backgroundColor,
+                        })
                     });
                     colorDiv.appendChild(colorCircle);
                     wrapper.appendChild(colorDiv);
@@ -151,4 +162,4 @@ export class Notes{
         });
     }
 }
-export default Notes;    
+export default Notes; 

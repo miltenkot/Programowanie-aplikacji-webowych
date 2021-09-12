@@ -1,6 +1,7 @@
 body {
   background: #ffda79;
   font-family: sans-serif;
+  font-size: 10px;
 }
 
 #inputContainer{
@@ -10,6 +11,7 @@ body {
   width: 100%;
   justify-content: right;
   padding-left: 50px;
+  
 }
 #input{
   color:black;
@@ -30,10 +32,9 @@ body {
     border:none;
     outline: none;
     background: #ccae62;
-    border-bottom: solid 1px;
     color: black;
-    height: 20px;
-    font-size: 20px;
+    height: 15px;
+    font-size: 15px;
     width: 100%;
     max-width: 400px;
   }
@@ -66,7 +67,7 @@ body {
   flex-direction: column;
   font-family: inherit;
   span{
-    font-size: 25px;
+    font-size: 15px;
     font-weight: bold;
   }
   hr{

@@ -1,11 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const App_1 = require("./App");
-const RemoteSorage_1 = require("./Storage/RemoteSorage");
 const Note_1 = require("./Note/Note");
 const Notes_1 = require("./Notes/Notes");
-require("./Styles/reset.scss");
 require("./Styles/main.scss");
+const AppFirebaseStorage_1 = require("./Storage/AppFirebaseStorage");
 const note = new Note_1.default();
 const notes = new Notes_1.default();
 const pinned = document.querySelector("#pinnedNotes");
@@ -16,12 +14,23 @@ const submitButton = document.querySelector("#submitButton");
 notes.pinnedDiv = pinned;
 notes.notesDiv = notesDiv;
 submitButton.addEventListener('click', () => {
-    let newNote = note.getNote(App_1.default.counter, inputTitle.value, inputText.value, "#ccae62", false);
-    note.map(newNote);
-    notes.notesDiv.appendChild(notes.create(newNote));
-    RemoteSorage_1.default.addFire(newNote);
+    let newNote = note.saveToNote('', inputTitle.value, inputText.value, "lightgray", false);
+    notes.notesDiv.appendChild(notes.createNote(newNote));
+    AppFirebaseStorage_1.default.addNote(newNote).then(res => {
+        newNote.id = res;
+    });
 });
 window.addEventListener('load', () => {
-    RemoteSorage_1.default.getNotesCollection();
+    AppFirebaseStorage_1.default.getFromStorage().then(function (data) {
+        data.forEach(ele => {
+            let note = ele;
+            if (note.isPinned) {
+                pinned.appendChild(notes.createNote(note));
+            }
+            else {
+                notesDiv.appendChild(notes.createNote(note));
+            }
+        });
+    });
 });
 //# sourceMappingURL=index.js.map

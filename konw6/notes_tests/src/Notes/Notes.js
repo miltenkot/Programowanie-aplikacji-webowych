@@ -4,8 +4,9 @@ exports.Notes = void 0;
 const App_1 = require("../App");
 require("../Styles/note.scss");
 const enum_1 = require("../Enums/enum");
+const AppFirebaseStorage_1 = require("../Storage/AppFirebaseStorage");
 class Notes {
-    create(note) {
+    createNote(note) {
         let noteDiv = document.createElement("div");
         noteDiv.id = App_1.default.counter.toString();
         noteDiv.className = "note";
@@ -30,7 +31,9 @@ class Notes {
         title.className = "noteTitle";
         title.innerHTML = note.title;
         title.addEventListener('DOMSubtreeModified', () => {
-            note.title = title.innerHTML;
+            AppFirebaseStorage_1.default.updateNote(note.id, {
+                title: title.innerHTML,
+            });
         });
         let noteCloseButton = document.createElement("button");
         noteCloseButton.id = "noteCloseButton" + App_1.default.counter;
@@ -70,24 +73,29 @@ class Notes {
     noteCloseEvent(noteCloseButton, note) {
         noteCloseButton.onclick = () => {
             noteCloseButton.parentNode.parentNode.parentNode.removeChild(noteCloseButton.parentNode.parentNode);
-            App_1.default.notes.splice(App_1.default.notes.indexOf(App_1.default.notes.find(element => element.id == note.id)), 1);
-            App_1.default.noteLS.splice(App_1.default.noteLS.indexOf(App_1.default.noteLS.find(element => element.id == note.id)), 1);
+            AppFirebaseStorage_1.default.deleteNote(note.id);
         };
     }
     noteCheckTextAreaEvent(noteTextArea, note) {
         noteTextArea.addEventListener('change', () => {
-            note.text = noteTextArea.value;
+            AppFirebaseStorage_1.default.updateNote(note.id, {
+                text: noteTextArea.value,
+            });
         });
     }
     notePinEvent(pinNote, noteDiv, note) {
         pinNote.addEventListener('click', () => {
             if (!note.isPinned) {
                 this.pinnedDiv.appendChild(noteDiv);
-                note.isPinned = true;
+                AppFirebaseStorage_1.default.updateNote(note.id, {
+                    isPinned: true,
+                });
             }
             else {
                 this.notesDiv.appendChild(noteDiv);
-                note.isPinned = false;
+                AppFirebaseStorage_1.default.updateNote(note.id, {
+                    isPinned: false,
+                });
             }
         });
     }
@@ -112,7 +120,9 @@ class Notes {
                     colorCircle.style.backgroundColor = enum_1.Colors[i];
                     colorCircle.addEventListener('click', () => {
                         noteDiv.style.backgroundColor = colorCircle.style.backgroundColor;
-                        note.bgColor = colorCircle.style.backgroundColor;
+                        AppFirebaseStorage_1.default.updateNote(note.id, {
+                            bgColor: colorCircle.style.backgroundColor,
+                        });
                     });
                     colorDiv.appendChild(colorCircle);
                     wrapper.appendChild(colorDiv);

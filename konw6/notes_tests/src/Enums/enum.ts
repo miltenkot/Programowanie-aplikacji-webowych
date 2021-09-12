@@ -1,8 +1,8 @@
 export enum Colors {
-    '#ff5252' = 0,
-    '#227093' = 1,
-    '#218c74' = 2,
-    '#cc8e35' = 3,
-    '#cd6133' = 4, 
-    '#40407a' = 5
+    yellow = 0,
+    blue = 1,
+    red = 2,
+    lightgray = 3,
+    purple = 4, 
+    pink = 5
 }
