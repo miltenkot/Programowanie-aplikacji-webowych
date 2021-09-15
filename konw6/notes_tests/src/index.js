@@ -1,9 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const App_1 = require("./App");
+const AppStorage_1 = require("./Storage/AppStorage");
 const Note_1 = require("./Note/Note");
 const Notes_1 = require("./Notes/Notes");
 require("./Styles/main.scss");
-const AppFirebaseStorage_1 = require("./Storage/AppFirebaseStorage");
 const note = new Note_1.default();
 const notes = new Notes_1.default();
 const pinned = document.querySelector("#pinnedNotes");
@@ -14,23 +15,25 @@ const submitButton = document.querySelector("#submitButton");
 notes.pinnedDiv = pinned;
 notes.notesDiv = notesDiv;
 submitButton.addEventListener('click', () => {
-    let newNote = note.saveToNote('', inputTitle.value, inputText.value, "lightgray", false);
+    let newNote = note.saveToNote(App_1.default.counter, inputTitle.value, inputText.value, "lightgray", false);
+    note.noteToArr(newNote);
     notes.notesDiv.appendChild(notes.createNote(newNote));
-    AppFirebaseStorage_1.default.addNote(newNote).then(res => {
-        newNote.id = res;
-    });
+});
+window.addEventListener('beforeunload', function () {
+    AppStorage_1.default.saveToLocalStorage(App_1.default.noteArr);
 });
 window.addEventListener('load', () => {
-    AppFirebaseStorage_1.default.getFromStorage().then(function (data) {
-        data.forEach(ele => {
-            let note = ele;
-            if (note.isPinned) {
-                pinned.appendChild(notes.createNote(note));
+    App_1.default.noteLS = AppStorage_1.default.getNotesFromLocalStorage();
+    if (App_1.default.noteLS) {
+        App_1.default.noteLS.forEach((elem, index) => {
+            App_1.default.noteArr[index] = App_1.default.noteLS[index];
+            if (App_1.default.noteLS[index].isPinned) {
+                pinned.appendChild(notes.createNote(App_1.default.noteLS[index]));
             }
             else {
-                notesDiv.appendChild(notes.createNote(note));
+                notesDiv.appendChild(notes.createNote(App_1.default.noteLS[index]));
             }
         });
-    });
+    }
 });
 //# sourceMappingURL=index.js.map

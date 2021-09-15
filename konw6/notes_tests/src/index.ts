@@ -1,8 +1,8 @@
 import app from './App';
+import appStorage from './Storage/AppStorage';
 import Note from './Note/Note';
 import Notes from './Notes/Notes';
 import './Styles/main.scss';
-import appFireStorage from './Storage/AppFirebaseStorage'
 
 const note = new Note();
 const notes = new Notes();
@@ -15,24 +15,28 @@ notes.pinnedDiv = pinned;
 notes.notesDiv = notesDiv;
 
 submitButton.addEventListener('click', () => {
-
-    let newNote = note.saveToNote('', inputTitle.value,inputText.value, "lightgray", false);
+    let newNote = note.saveToNote(app.counter, inputTitle.value,inputText.value, "lightgray", false);
+    note.noteToArr(newNote);
     notes.notesDiv.appendChild(notes.createNote(newNote));
-    appFireStorage.addNote(newNote).then(res => {
-        newNote.id = res;
-    });
+});
+
+window.addEventListener('beforeunload', function() {
+    appStorage.saveToLocalStorage(app.noteArr);
 });
 
 window.addEventListener('load', () => {
-    appFireStorage.getFromStorage().then(function(data){
-        data.forEach(ele => {
-            let note = ele as INote;
+    app.noteLS = appStorage.getNotesFromLocalStorage();
+    
+    if(app.noteLS){
+        app.noteLS.forEach((elem, index) => {
 
-            if(note.isPinned){
-                pinned.appendChild(notes.createNote(note));
+            app.noteArr[index] = app.noteLS[index];
+
+            if(app.noteLS[index].isPinned){
+                pinned.appendChild(notes.createNote(app.noteLS[index]));
             }else{
-                notesDiv.appendChild(notes.createNote(note));
+                notesDiv.appendChild(notes.createNote(app.noteLS[index]));
             }
         });
-    });
+    }
 });

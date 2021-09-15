@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Note = void 0;
+const App_1 = require("../App");
 class Note {
     saveToNote(noteId, noteTitle, noteText, noteBgColor, isNotePinned) {
         let newDate = new Date();
@@ -13,6 +14,10 @@ class Note {
             date: newDate.toISOString().split('T')[0]
         };
         return note;
+    }
+    noteToArr(note) {
+        App_1.default.noteArr.push(note);
+        App_1.default.counter++;
     }
 }
 exports.Note = Note;

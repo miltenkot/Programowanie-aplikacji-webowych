@@ -14,10 +14,5 @@ export class Note{
         }
         return note;
     }
-
-    // noteToArr(note: INote){
-    //     app.noteArr.push(note);
-    //     app.counter++;
-    // }
 }
 export default Note;

@@ -1,7 +1,6 @@
 import app from '../App';
 import '../Styles/note.scss';
 import { Colors } from '../Enums/enum'
-import appFireStorage from '../Storage/AppFirebaseStorage'
 
 export class Notes{
 
@@ -39,17 +38,8 @@ export class Notes{
         title.className = "noteTitle";
         title.innerHTML = note.title;
         title.addEventListener('DOMSubtreeModified', () => {
-            appFireStorage.updateNote(note.id,{
-                title: title.innerHTML,
-            })
+            note.title = title.innerHTML;
         });
-
-
-        let noteCloseButton: HTMLButtonElement = document.createElement("button");
-        noteCloseButton.id = "noteCloseButton" + app.counter;
-        noteCloseButton.className = "noteCloseButton";
-        noteCloseButton.innerHTML = 'X';
-        this.noteCloseEvent(noteCloseButton, note);
 
         let noteTextArea: HTMLTextAreaElement = document.createElement("textarea");
         noteTextArea.id = "noteTextArea" + app.counter;
@@ -73,18 +63,24 @@ export class Notes{
         noteChangeColor.innerText = "COLOR"
         this.noteChangeColorEvent(noteChangeColor, noteDiv, note);
 
+        let noteCloseButton: HTMLButtonElement = document.createElement("button");
+        noteCloseButton.id = "noteCloseButton" + app.counter;
+        noteCloseButton.className = "noteButtons";
+        noteCloseButton.innerHTML = 'X';
+        this.noteCloseEvent(noteCloseButton, note);
+
         noteDiv.appendChild(noteDragDiv);
         noteDragDiv.appendChild(noteDate);
         noteDiv.appendChild(noteInnerWrapper);
 
         noteInnerWrapper.appendChild(noteTitleDiv);
         noteTitleDiv.appendChild(title);
-        noteInnerWrapper.appendChild(noteCloseButton);
         noteInnerWrapper.appendChild(noteTextArea);
 
         noteDiv.appendChild(noteButtons);
         noteButtons.appendChild(pinNote);
         noteButtons.appendChild(noteChangeColor);
+        noteButtons.appendChild(noteCloseButton);
         return noteDiv;
     }
 
@@ -92,16 +88,15 @@ export class Notes{
 
         noteCloseButton.onclick = () => { 
             noteCloseButton.parentNode.parentNode.parentNode.removeChild(noteCloseButton.parentNode.parentNode);
-            appFireStorage.deleteNote(note.id);
+            app.noteArr.splice(app.noteArr.indexOf(app.noteArr.find(element => element.id == note.id)),1);
+            app.noteLS.splice(app.noteLS.indexOf(app.noteLS.find(element => element.id == note.id)),1);
         }
     }
 
     noteCheckTextAreaEvent(noteTextArea: HTMLTextAreaElement,  note: INote){
 
         noteTextArea.addEventListener('change', () => {
-            appFireStorage.updateNote(note.id,{
-                text: noteTextArea.value,
-            })
+            note.text = noteTextArea.value;
         });
     }
 
@@ -110,15 +105,11 @@ export class Notes{
         pinNote.addEventListener('click', () => {
             if(!note.isPinned){
                 this.pinnedDiv.appendChild(noteDiv);
-                appFireStorage.updateNote(note.id,{
-                    isPinned: true,
-                })
+                note.isPinned = true;
                 
             }else{
                 this.notesDiv.appendChild(noteDiv);
-                appFireStorage.updateNote(note.id,{
-                    isPinned: false,
-                })
+                note.isPinned = false;
             }
         });
     }
@@ -151,9 +142,7 @@ export class Notes{
     
                     colorCircle.addEventListener('click', () => {
                         noteDiv.style.backgroundColor = colorCircle.style.backgroundColor;
-                        appFireStorage.updateNote(note.id,{
-                            bgColor: colorCircle.style.backgroundColor,
-                        })
+                        note.bgColor = colorCircle.style.backgroundColor
                     });
                     colorDiv.appendChild(colorCircle);
                     wrapper.appendChild(colorDiv);
@@ -162,4 +151,4 @@ export class Notes{
         });
     }
 }
-export default Notes; 
+export default Notes;    

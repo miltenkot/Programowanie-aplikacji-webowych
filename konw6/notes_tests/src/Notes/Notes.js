@@ -4,7 +4,6 @@ exports.Notes = void 0;
 const App_1 = require("../App");
 require("../Styles/note.scss");
 const enum_1 = require("../Enums/enum");
-const AppFirebaseStorage_1 = require("../Storage/AppFirebaseStorage");
 class Notes {
     createNote(note) {
         let noteDiv = document.createElement("div");
@@ -31,15 +30,8 @@ class Notes {
         title.className = "noteTitle";
         title.innerHTML = note.title;
         title.addEventListener('DOMSubtreeModified', () => {
-            AppFirebaseStorage_1.default.updateNote(note.id, {
-                title: title.innerHTML,
-            });
+            note.title = title.innerHTML;
         });
-        let noteCloseButton = document.createElement("button");
-        noteCloseButton.id = "noteCloseButton" + App_1.default.counter;
-        noteCloseButton.className = "noteCloseButton";
-        noteCloseButton.innerHTML = 'X';
-        this.noteCloseEvent(noteCloseButton, note);
         let noteTextArea = document.createElement("textarea");
         noteTextArea.id = "noteTextArea" + App_1.default.counter;
         noteTextArea.className = "noteTextArea";
@@ -58,44 +50,44 @@ class Notes {
         noteChangeColor.className = "noteButtons";
         noteChangeColor.innerText = "COLOR";
         this.noteChangeColorEvent(noteChangeColor, noteDiv, note);
+        let noteCloseButton = document.createElement("button");
+        noteCloseButton.id = "noteCloseButton" + App_1.default.counter;
+        noteCloseButton.className = "noteButtons";
+        noteCloseButton.innerHTML = 'X';
+        this.noteCloseEvent(noteCloseButton, note);
         noteDiv.appendChild(noteDragDiv);
         noteDragDiv.appendChild(noteDate);
         noteDiv.appendChild(noteInnerWrapper);
         noteInnerWrapper.appendChild(noteTitleDiv);
         noteTitleDiv.appendChild(title);
-        noteInnerWrapper.appendChild(noteCloseButton);
         noteInnerWrapper.appendChild(noteTextArea);
         noteDiv.appendChild(noteButtons);
         noteButtons.appendChild(pinNote);
         noteButtons.appendChild(noteChangeColor);
+        noteButtons.appendChild(noteCloseButton);
         return noteDiv;
     }
     noteCloseEvent(noteCloseButton, note) {
         noteCloseButton.onclick = () => {
             noteCloseButton.parentNode.parentNode.parentNode.removeChild(noteCloseButton.parentNode.parentNode);
-            AppFirebaseStorage_1.default.deleteNote(note.id);
+            App_1.default.noteArr.splice(App_1.default.noteArr.indexOf(App_1.default.noteArr.find(element => element.id == note.id)), 1);
+            App_1.default.noteLS.splice(App_1.default.noteLS.indexOf(App_1.default.noteLS.find(element => element.id == note.id)), 1);
         };
     }
     noteCheckTextAreaEvent(noteTextArea, note) {
         noteTextArea.addEventListener('change', () => {
-            AppFirebaseStorage_1.default.updateNote(note.id, {
-                text: noteTextArea.value,
-            });
+            note.text = noteTextArea.value;
         });
     }
     notePinEvent(pinNote, noteDiv, note) {
         pinNote.addEventListener('click', () => {
             if (!note.isPinned) {
                 this.pinnedDiv.appendChild(noteDiv);
-                AppFirebaseStorage_1.default.updateNote(note.id, {
-                    isPinned: true,
-                });
+                note.isPinned = true;
             }
             else {
                 this.notesDiv.appendChild(noteDiv);
-                AppFirebaseStorage_1.default.updateNote(note.id, {
-                    isPinned: false,
-                });
+                note.isPinned = false;
             }
         });
     }
@@ -120,9 +112,7 @@ class Notes {
                     colorCircle.style.backgroundColor = enum_1.Colors[i];
                     colorCircle.addEventListener('click', () => {
                         noteDiv.style.backgroundColor = colorCircle.style.backgroundColor;
-                        AppFirebaseStorage_1.default.updateNote(note.id, {
-                            bgColor: colorCircle.style.backgroundColor,
-                        });
+                        note.bgColor = colorCircle.style.backgroundColor;
                     });
                     colorDiv.appendChild(colorCircle);
                     wrapper.appendChild(colorDiv);
